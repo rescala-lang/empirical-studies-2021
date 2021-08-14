@@ -2,6 +2,7 @@ package task5
 
 import loci.registry.Registry
 import org.scalajs.dom.document
+import rescala.extra.distribution.WebRTCHandling
 
 import java.util.concurrent.ThreadLocalRandom
 
