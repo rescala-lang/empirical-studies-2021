@@ -17,7 +17,7 @@ class TaskList(toggleAll: Event[UIEvent], taskRefs: TaskRefObj) {
   def listInitial: State = RGA[TaskRef, DietMapCContext](replicaId)
 
   def handleCreateTodo(state: => State)(desc: String): State = {
-    val taskid   = s"Task(${ThreadLocalRandom.current().nextLong().toHexString})"
+    val taskid  = s"Task(${ThreadLocalRandom.current().nextLong().toHexString})"
     val taskref = taskRefs.lookupOrCreateTaskRef(taskid, Some(TaskData(desc)))
     state.resetDeltaBuffer().prepend(taskref)
   }
