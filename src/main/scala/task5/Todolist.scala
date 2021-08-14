@@ -1,4 +1,4 @@
-package todo
+package task5
 
 import loci.registry.Registry
 import org.scalajs.dom.document
@@ -23,6 +23,5 @@ object Todolist {
     document.body.appendChild(webrtc.webrtcHandlingArea.render)
 
   }
-
 
 }

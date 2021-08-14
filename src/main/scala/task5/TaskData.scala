@@ -12,13 +12,12 @@ import rescala.extra.Tags._
 import rescala.extra.distributables.LociDist
 import rescala.extra.lattices.delta.CContext._
 import rescala.extra.lattices.delta.Codecs._
-import rescala.extra.lattices.delta.{Delta, TimedVal, UIJDLattice}
 import rescala.extra.lattices.delta.crdt.reactive.LWWRegister
 import rescala.extra.lattices.delta.interfaces.MVRegisterInterface
-import rescala.todo.DeltaStateReactive
+import rescala.extra.lattices.delta.{Delta, TimedVal}
 import scalatags.JsDom.TypedTag
-import task5.Todolist.replicaId
 import scalatags.JsDom.all._
+import task5.Todolist.replicaId
 
 import scala.Function.const
 import scala.collection.mutable
@@ -103,19 +102,6 @@ class TaskRefObj(toggleAll: Event[UIEvent]) {
     val doneEv = toggleAll || doneClick.event
 
     val deltaEvt = Evt[Delta[LWWRegister.State[TaskData, DietMapCContext]]]()
-
-    //type Carrier = LWWRegister.State[TaskData, DietMapCContext]
-    //
-    //val merge = implicitly[UIJDLattice[Carrier]]
-    //
-    //val crdtAlt = DeltaStateReactive.create[Carrier, Carrier](
-    //  lww,
-    //  deltaEvt,
-    //  (s, d) => merge.merge(s, d),
-    //  Seq(
-    //    { (dt: DynamicTicket, current: Carrier) => dt.depend(doneEv); current },
-    //  )
-    //)
 
     val crdt = Events.foldAll(lww)(current =>
       Seq(

@@ -6,7 +6,8 @@ lazy val userStudies = project.in(file("."))
     resolvers += "jitpack" at "https://jitpack.io",
     resolvers += ("STG old bintray repo" at "http://www.st.informatik.tu-darmstadt.de/maven/").withAllowInsecureProtocol(true),
     libraryDependencies ++= Seq(
-      "com.github.rescala-lang.rescala" %%% "rescala"     % "0923d1786b",
+      "com.github.rescala-lang.rescala" %%% "rescala"     % "d88a5a61d95d7",
+      "com.github.rescala-lang.rescala" %%% "replication"     % "d88a5a61d95d7",
       "org.scala-js"                    %%% "scalajs-dom" % "1.1.0",
       "com.lihaoyi"                     %%% "scalatags"   % "0.9.4",
       "com.github.scala-loci.scala-loci" %%% "scala-loci-communicator-webrtc" % "33e7a65a3ca29551e440abfdb6903a062c7dab70",
