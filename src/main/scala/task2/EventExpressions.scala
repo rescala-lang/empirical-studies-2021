@@ -1,4 +1,4 @@
-package task3
+package task2
 
 import rescala.default._
 

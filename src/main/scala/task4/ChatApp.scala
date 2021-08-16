@@ -1,22 +1,20 @@
 package task4
 
 import loci.registry.{Binding, Registry}
+import loci.serializer.jsoniterScala.jsoniteScalaBasedSerializable
 import org.scalajs.dom.document
 import org.scalajs.dom.html.{Div, Input}
 import rescala.default._
 import rescala.extra.Tags._
 import rescala.extra.distribution.{Network, WebRTCHandling}
-import rescala.extra.lattices.Lattice
 import rescala.extra.lattices.sequences.RGA
 import rescala.extra.lattices.sequences.RGA.RGA
 import scalatags.JsDom.TypedTag
 import scalatags.JsDom.all._
 import task4.Codecs._
-import loci.serializer.jsoniterScala.jsoniteScalaBasedSerializable
 
 case class Chatline(author: String, message: String)
 
-case class Epoche[T](number: Int, payload: T)
 
 object ChatApp {
   // convince intellij that the import is needed :-)
@@ -24,13 +22,6 @@ object ChatApp {
 
   val registry = new Registry
 
-  implicit def makeEpocheInstance[T: Lattice]: Lattice[Epoche[T]] = new Lattice[Epoche[T]] {
-    override def merge(left: Epoche[T], right: Epoche[T]): Epoche[T] = {
-      if (left.number > right.number) left
-      else if (left.number < right.number) right
-      else Epoche(number = left.number, payload = Lattice[T].merge(left.payload, right.payload))
-    }
-  }
 
   def main(args: Array[String]): Unit = {
     val contents = getContents()
