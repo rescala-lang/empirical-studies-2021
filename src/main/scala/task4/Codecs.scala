@@ -12,7 +12,6 @@ object Codecs {
   implicit val stringCodec: JsonValueCodec[String]         = JsonCodecMaker.make[String]
   implicit val listCodec  : JsonValueCodec[List[Chatline]] = JsonCodecMaker.make[List[Chatline]]
 
-  implicit val rgaTransmittable = IdenticallyTransmittable[Epoche[RGA[Chatline]]]()
 
   type Rgatuple = (TwoPSet[Vertex], Map[Vertex, Vertex], Map[Vertex, Chatline])
   def rgaToTuple(rga: RGA[Chatline]): Rgatuple = rga match {
@@ -34,7 +33,6 @@ object Codecs {
     override def nullValue: RGA[Chatline] = RGA.empty[Chatline]
   }
 
-  implicit val epocheCodec  : JsonValueCodec[Epoche[RGA[Chatline]]] = JsonCodecMaker.make[Epoche[RGA[Chatline]]]
-
+  implicit val rgaTransmittable = IdenticallyTransmittable[RGA[Chatline]]()
 
 }

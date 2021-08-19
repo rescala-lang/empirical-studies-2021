@@ -9,19 +9,20 @@ import rescala.extra.Tags._
 import rescala.extra.distribution.{Network, WebRTCHandling}
 import rescala.extra.lattices.sequences.RGA
 import rescala.extra.lattices.sequences.RGA.RGA
+import rescala.extra.lattices.Lattice
 import scalatags.JsDom.TypedTag
 import scalatags.JsDom.all._
 import task4.Codecs._
+import com.github.plokhotnyuk.jsoniter_scala.core._
+import org.scalajs.dom
 
-case class Chatline(author: String, message: String)
-
+case class Chatline(author: String, message: String, date: Long)
 
 object ChatApp {
   // convince intellij that the import is needed :-)
   jsoniteScalaBasedSerializable[String]
 
   val registry = new Registry
-
 
   def main(args: Array[String]): Unit = {
     val contents = getContents()
@@ -41,31 +42,47 @@ object ChatApp {
     val (messageEvent, renderedMessage): (Event[String], Input) =
       RenderUtil.inputFieldHandler(messageInput, onchange, clear = true)
 
-    val nameSignal: Signal[String] = Storing.storedAs("name", "") { init =>
-      renderedName.value = init
-      nameEvent.latest(init)
+    val nameSignal: Signal[String] = nameEvent.latest(renderedName.value)
+
+    /*
+    Task 4A:
+      This application models a very simple chat application where each user may enter a name, and then send messages which are replicated to all other devices.
+      In the current version, the next two definitions create a `Chatline` for each new message a user enters. A chatline is just the message together with the date and author of the message.
+      Then, all chatlines are collected into a history.
+      The history is an RGA, which is an expensive replicated data structure that ensures correct order.
+      However, you note that each chatline has an associated data, and chat messages could just be ordered by that date, thus not requiring the cost of the RGA.
+
+      Replace the `RGA[Chatline]` in the history with a simple `List[Chatline]`. You may assume that the creation date of new messages on the current device is always ascending. You may also assume that clocks between different devices are reasonably synchronized.
+
+      To enable replication of your new list of chatlines, the system requires an implicit instance of `Lattice[List[Chatline]]`. Implement that instance ensuring that the merge method is associative, commutative, and idempotent.
+
+     */
+
+    val chatline: Event[Chatline] = messageEvent.map { msg =>
+      Chatline(nameSignal.value, msg, System.currentTimeMillis())
     }
 
-    val chatline: Event[Chatline] = messageEvent.map { msg => Chatline(nameSignal.value, msg) }
+    val history: Signal[RGA[Chatline]] =
+      chatline.fold(RGA.empty[Chatline])((current, line) => current.prepend(line))
 
-    val deleteAll = Evt[Unit]()
+    /*
+    Task4B:
+      Its annoying, that the chat history is lost every time the browser window is restarted!
+      Fix that by storing and loading the history from local storage.
 
-    val history: Signal[Epoche[RGA[Chatline]]] =
-      Storing.storedAs("history", Epoche(0, RGA.empty[Chatline])) { initial =>
-        Events.foldAll(initial) { current =>
-          Seq(
-            chatline act { line => current.copy(payload = current.payload.prepend(line)) },
-            deleteAll act { arg => Epoche(number = current.number + 1, RGA.empty[Chatline]) }
-          )
-        }
-      }
+      You may use the following constructs for reading and writing objects of type `A` to local storage:
+
+     `readFromString[A](dom.window.localStorage.getItem(key))`
+     `dom.window.localStorage.setItem(key, writeToString(ft))`
+
+     */
 
     Network.replicate(history, registry)(Binding("history"))
 
     val chatDisplay = Signal.dynamic {
-      val reversedHistory = history.value.payload.toList.reverse
-      reversedHistory.map { case Chatline(author, message) =>
-        val styleString = if (chatline.value.contains(Chatline(author, message))) "color: red" else ""
+      val reversedHistory = history.value.toList.reverse
+      reversedHistory.map { case Chatline(author, message, date) =>
+        val styleString = if (chatline.value.contains(Chatline(author, message, date))) "color: red" else ""
         p(s"${author}: $message", style := styleString)
       }
     }
