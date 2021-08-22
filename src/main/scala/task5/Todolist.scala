@@ -13,6 +13,8 @@ import java.util.concurrent.ThreadLocalRandom
  Your task is to document the dataflow in this application by creating a diagram (either in text or as an image) of how interactions (such as user adding new tasks) travel through the program.
  Target the level of detail of your description to someone else who wants to understand this particular codebase.
 
+ Consider using https://www.yworks.com/yed-live/ to draw the graph.
+
  */
 
 object Todolist {

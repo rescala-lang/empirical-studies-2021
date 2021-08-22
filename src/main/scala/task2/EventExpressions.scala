@@ -4,6 +4,18 @@ import rescala.default._
 
 import scala.collection.immutable.Queue
 
+/*
+Task2:
+
+REScala has event expressions `Event { }` as a generic mechanism to declare events, but also provides many specific combinators for often used functionality.
+Event expressions can be used to define the same semantics as combinators.
+
+Your task is to state which combinators (c1-c13) correspond to which event expressions (d1-d13).
+There are also 4 extra expressions (e1-e4) that are alternative forms of the above, also assign those.
+
+You may use `assertEquals(cN, dN)` to test you assumption.
+ */
+
 object EventExpressions {
 
   val a = Evt[String]
@@ -54,7 +66,7 @@ object EventExpressions {
   val e2  = a.map(_ => ())
   val e3  = Event { a.value.orElse(b.value) }
 
-  val e7  = s0.iterate(0)(s => s + 1)
+  val e4  = s0.iterate(0)(s => s + 1)
 
   def assertEquals[T >: Null](c: Event[T], d: Event[T]): Unit = {
     var count = 2
