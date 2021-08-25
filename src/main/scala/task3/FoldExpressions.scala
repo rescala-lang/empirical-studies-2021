@@ -9,8 +9,6 @@ case class Frame(sourceAddress: Int, data: Array[Byte])
 object FoldExpressions {
 
   val monitor: Evt[Frame] = Evt[Frame]
-  //val startObservingAddress: Evt[Int] = Evt[Int]
-  //val stopObservingAddress: Evt[Int] = Evt[Int]
   val timer: Evt[Long] = Evt[Long]
 
   /* Assume you ingress events from the monitor mode of a wifi chip.

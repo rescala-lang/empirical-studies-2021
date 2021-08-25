@@ -50,7 +50,7 @@ object ChatApp {
       In the current version, the next two definitions create a `Chatline` for each new message a user enters. A chatline is just the message together with the date and author of the message.
       Then, all chatlines are collected into a history.
       The history is an RGA, which is an expensive replicated data structure that ensures correct order.
-      However, you note that each chatline has an associated data, and chat messages could just be ordered by that date, thus not requiring the cost of the RGA.
+      However, you note that each chatline has an associated date, and chat messages could just be ordered by that date, thus not requiring the cost of the RGA.
 
       Replace the `RGA[Chatline]` in the history with a simple `List[Chatline]`. You may assume that the creation date of new messages on the current device is always ascending. You may also assume that clocks between different devices are reasonably synchronized.
 
@@ -64,6 +64,14 @@ object ChatApp {
 
     val history: Signal[RGA[Chatline]] =
       chatline.fold(RGA.empty[Chatline])((current, line) => current.prepend(line))
+
+    // template for RGA instance
+
+    implicit val listInstance = new Lattice[List[Chatline]] {
+      def merge(left: List[Chatline], right: List[Chatline]) = {
+        ...
+      }
+    }
 
     /*
     Task4B:
