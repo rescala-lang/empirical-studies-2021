@@ -69,7 +69,7 @@ object ChatApp {
 
     implicit val listInstance = new Lattice[List[Chatline]] {
       def merge(left: List[Chatline], right: List[Chatline]) = {
-        ...
+        ???
       }
     }
 
