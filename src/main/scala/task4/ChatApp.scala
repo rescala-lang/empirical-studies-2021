@@ -7,7 +7,7 @@ import org.scalajs.dom.html.{Div, Input}
 import rescala.default._
 import rescala.extra.Tags._
 import rescala.extra.distribution.{Network, WebRTCHandling}
-import rescala.extra.lattices.sequences.RGA
+import rescala.extra.lattices.sequences.{LatticeSequence, RGA}
 import rescala.extra.lattices.sequences.RGA.RGA
 import rescala.extra.lattices.Lattice
 import scalatags.JsDom.TypedTag
@@ -54,24 +54,9 @@ object ChatApp {
 
       Replace the `RGA[Chatline]` in the history with a simple `List[Chatline]`. You may assume that the creation date of new messages on the current device is always ascending. You may also assume that clocks between different devices are reasonably synchronized.
 
-      To enable replication of your new list of chatlines, the system requires an implicit instance of `Lattice[List[Chatline]]`. Implement that instance ensuring that the merge method is associative, commutative, and idempotent.
+      To enable replication of your new list of chatlines, the system requires an instance of `Lattice[List[Chatline]]` (instead of the predefined `RGA.lattice`. Implement that instance ensuring that the merge method is associative, commutative, and idempotent.
 
      */
-
-    val chatline: Event[Chatline] = messageEvent.map { msg =>
-      Chatline(nameSignal.value, msg, System.currentTimeMillis())
-    }
-
-    val history: Signal[RGA[Chatline]] =
-      chatline.fold(RGA.empty[Chatline])((current, line) => current.prepend(line))
-
-    // template for RGA instance
-
-    implicit val listInstance = new Lattice[List[Chatline]] {
-      def merge(left: List[Chatline], right: List[Chatline]) = {
-        ???
-      }
-    }
 
     /*
     Task4B:
@@ -85,7 +70,17 @@ object ChatApp {
 
      */
 
-    Network.replicate(history, registry)(Binding("history"))
+    val chatline: Event[Chatline] = messageEvent.map { msg =>
+      Chatline(nameSignal.value, msg, System.currentTimeMillis())
+    }
+
+    val history: Signal[RGA[Chatline]] =
+      chatline.fold(RGA.empty[Chatline])((current, line) => current.prepend(line))
+
+    Network.replicate(history, registry)(Binding("history"))(RGA.lattice)
+
+
+    // End of code relevant for the task
 
     val chatDisplay = Signal.dynamic {
       val reversedHistory = history.value.toList.reverse
