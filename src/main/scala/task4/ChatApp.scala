@@ -54,7 +54,7 @@ object ChatApp {
 
       Replace the `RGA[Chatline]` in the history with a simple `List[Chatline]`. You may assume that the creation date of new messages on the current device is always ascending. You may also assume that clocks between different devices are reasonably synchronized.
 
-      To enable replication of your new list of chatlines, the system requires an instance of `Lattice[List[Chatline]]` (instead of the predefined `RGA.lattice`. Implement that instance ensuring that the merge method is associative, commutative, and idempotent.
+      After the replacement, the replication will no longer compile. Fix that error.
 
      */
 
