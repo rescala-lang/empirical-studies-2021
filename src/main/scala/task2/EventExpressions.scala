@@ -39,7 +39,7 @@ object EventExpressions {
 
   val c7  = s0.count()
   val c8  = s0.latest("init")
-  val c9  = s0.latestOption()
+  val c9  = s0.latestOption
   val c10 = s0.list()
   val c11 = s0.last(n)
   val c12 = s0.toggle(s1, s2)
